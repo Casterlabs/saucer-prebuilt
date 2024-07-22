@@ -1,0 +1,113 @@
+on:
+  push:
+  pull_request:
+
+name: ⛓️ Build C Bindings
+
+env:
+  LINUX_QT5_DEPS: "qt5-base qt5-webchannel qt5-webengine"
+  LINUX_QT6_DEPS: "qt6-base qt6-declarative qt6-svg qt6-tools qt6-translations qt6-webchannel qt6-webengine"
+
+# Note that `CONDITION && "A" || 'B'` is GitHub's official ternary operator. See their docs here: https://docs.github.com/en/actions/learn-github-actions/expressions#example
+
+jobs:
+  # ------------------------
+  # Linux (GNU)
+  # ------------------------
+  build-linux-gnu:
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type:
+          - Release
+          # - Debug
+        backend:
+          - Qt5
+          - Qt6
+        platform:
+          - { arch: x86_64, bits: 64 }
+          - { arch: x86, bits: 32 }
+
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    name: "Linux-${{ matrix.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+
+    env:
+      CFLAGS: "-m${{ matrix.platform.bits }}"
+      CXXFLAGS: "-m${{ matrix.platform.bits }}"
+    steps:
+      - name: 📥 Checkout actions code
+        uses: actions/checkout@v4
+
+      - name: 🛸 Checkout Saucer code
+        uses: actions/checkout@v4
+        with:
+          repository: saucer/saucer
+          path: saucer
+          ref: c-bindings # Temporary.
+
+      - name: 📋 Install dependencies
+        shell: bash
+        run: |
+          pacman --noconfirm -Syu cmake gcc git xorg-server-xvfb xorg-xwd imagemagick
+          pacman --noconfirm -Syu ${{ matrix.backend == 'Qt5' && env.LINUX_QT5_DEPS || env.LINUX_QT6_DEPS }} -y
+
+      - name: 🔨 Compile
+        shell: bash
+        run: |
+          cd saucer
+          mkdir build 
+          cd build
+          cmake .. -Dsaucer_bindings=ON -Dsaucer_backend=${{ matrix.backend }}
+          cmake --build . --config ${{ matrix.build-type }}
+
+      - name: 📦 Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: "Linux-${{ matrix.backend }}-${{ matrix.platform.arch}}-${{ matrix.build-type }}"
+          path: "saucer/build/bindings/libsaucer-bindings.so"
+
+  # ------------------------
+  # Windows
+  # ------------------------
+  build-windows-msvc:
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type:
+          - Release
+          # - Debug
+        platform:
+          # - { arch: x86, nativeArch: x86 }
+          - { arch: x86_64, nativeArch: x64 }
+
+    runs-on: windows-latest
+    name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+
+    # env:
+    #   TARGET_ARCH: ${{ matrix.platform.nativeArch }}
+    steps:
+      - name: 📥 Checkout actions code
+        uses: actions/checkout@v4
+
+      - name: 🛸 Checkout Saucer code
+        uses: actions/checkout@v4
+        with:
+          repository: saucer/saucer
+          path: saucer
+          ref: c-bindings # Temporary.
+
+      - name: 🔨 Compile
+        shell: bash
+        run: |
+          cd saucer
+          mkdir build 
+          cd build
+          cmake .. -Dsaucer_bindings=ON -Dsaucer_backend=WebView2
+          cmake --build . --config ${{ matrix.build-type }}
+
+      - name: 📦 Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          path: "saucer/build/bindings/${{ matrix.build-type }}/saucer-bindings.dll"
