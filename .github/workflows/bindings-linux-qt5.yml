@@ -34,7 +34,7 @@ jobs:
         uses: ./.github/actions/build-linux-qt
         with:
           backend: Qt5
-          platformArch: ${{ matrix.platform.arch }}
+          arch: ${{ matrix.platform.arch }}
           nativeArch: ${{ matrix.platform.nativeArch }}
           build-type: ${{ matrix.build-type }}
 
