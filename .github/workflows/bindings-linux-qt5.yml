@@ -20,7 +20,6 @@ jobs:
           # - Debug
         platform: # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
           - { arch: "x86_64", nativeArch: "amd64" }
-          - { arch: "x86", nativeArch: "386" }
           - { arch: "aarch64", nativeArch: "arm64" }
           - { arch: "armhf", nativeArch: "arm/v7" }
 
