@@ -1,0 +1,21 @@
+on:
+  push:
+  pull_request:
+
+name: ⛓️ Build C Bindings (Linux + GTK)
+
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true # Shut up. https://github.blog/changelog/2023-06-13-github-actions-all-actions-will-run-on-node16-instead-of-node12-by-default/
+
+jobs:
+  # ------------------------
+  # GNU + GTK
+  # ------------------------
+
+  # TODO :^)
+
+  # ------------------------
+  # MUSL + GTK
+  # ------------------------
+
+  # TODO :^) [via Alpine linux]

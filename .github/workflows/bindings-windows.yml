@@ -1,0 +1,47 @@
+on:
+  push:
+  pull_request:
+
+name: ⛓️ Build C Bindings (Windows + WebView2)
+
+jobs:
+  # ------------------------
+  # WebView2
+  # ------------------------
+  build-windows-msvc:
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type:
+          - Release
+          # - Debug
+        platform:
+          # - { arch: x86, nativeArch: x86 }
+          - { arch: x86_64, nativeArch: x64 }
+
+    runs-on: windows-latest
+    name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+
+    # env:
+    #   TARGET_ARCH: ${{ matrix.platform.nativeArch }}
+    steps:
+      - name: 📥 Checkout actions code
+        uses: actions/checkout@v4
+
+      - name: 🛸 Checkout Saucer code
+        uses: actions/checkout@v4
+        with:
+          repository: saucer/saucer
+          path: saucer
+          ref: c-bindings # Temporary.
+
+      - name: 🔨 Compile
+        shell: cmd
+        run: |
+          build-windows.bat ${{ matrix.build-type }} WebView2
+
+      - name: 📦 Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          path: "saucer/build/bindings/${{ matrix.build-type }}/saucer-bindings.dll"

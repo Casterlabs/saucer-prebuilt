@@ -1,0 +1,12 @@
+on:
+  push:
+  pull_request:
+
+name: ⛓️ Build C Bindings (macOS + WebKit)
+
+jobs:
+  # ------------------------
+  # WebKit
+  # ------------------------
+
+  # TODO :^)
