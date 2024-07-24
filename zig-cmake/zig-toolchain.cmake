@@ -1,6 +1,5 @@
 set(CMAKE_C_COMPILER "zig" cc $ENV{TOOLCHAIN_TARGET})
 set(CMAKE_CXX_COMPILER "zig" c++ $ENV{TOOLCHAIN_TARGET})
-set(CMAKE_LINKER "ld.lld")
 
 if(WIN32)
     set(SCRIPT_SUFFIX ".cmd")
