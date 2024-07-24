@@ -56,7 +56,7 @@ jobs:
       - name: 📋 Install dependencies
         shell: bash
         run: |
-          pacman --noconfirm -Syu wget cmake git xorg-server-xvfb zig
+          pacman --noconfirm -Syu wget cmake git xorg-server-xvfb zig ld.lld
 
       - name: 📋 Install Qt5 Dependencies
         shell: bash
