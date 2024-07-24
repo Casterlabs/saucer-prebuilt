@@ -1,0 +1,92 @@
+on:
+  push:
+  pull_request:
+
+name: ⛓️ Build C Bindings (Linux)
+
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true # Shut up. https://github.blog/changelog/2023-06-13-github-actions-all-actions-will-run-on-node16-instead-of-node12-by-default/
+  CXX_STD: c++20
+  TARGET_GLIBC_VERSION: 2.38
+
+jobs:
+  build-gnu-linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        backend:
+          - Qt5
+          # - Qt6
+          # - Dummy
+
+        build-type:
+          - Release
+          # - Debug
+
+        platform: # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
+          - {
+              arch: "x86_64",
+              target: "-target x86_64-linux-gnu.$TARGET_GLIBC_VERSION -mtune=sandybridge",
+            }
+          # - {
+          #     arch: "x86", #
+          #     target: "-target x86-linux-gnu.$TARGET_GLIBC_VERSION",
+          #   }
+          # - {
+          #     arch: "aarch64",
+          #     target: "-target aarch64-linux-gnu.$TARGET_GLIBC_VERSION",
+          #   }
+          # - {
+          #     arch: "arm",
+          #     target: "-target arm-linux-gnueabi.$TARGET_GLIBC_VERSION -mfloat-abi=soft -mtune=arm1176jzf_s",
+          #   }
+          # - {
+          #     arch: "armhf",
+          #     target: "-target arm-linux-gnueabihf.$TARGET_GLIBC_VERSION -mfloat-abi=hard -mtune=arm1176jzf_s",
+          #   }
+
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    name: "GNU/Linux-${{ matrix.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+
+    steps:
+      - name: 📥 Checkout actions code
+        uses: actions/checkout@v4
+
+      - name: 📋 Install dependencies
+        shell: bash
+        run: |
+          pacman --noconfirm -Syu wget cmake git xorg-server-xvfb zig
+
+      - name: 📋 Install Qt5 Dependencies
+        shell: bash
+        if: matrix.backend == 'Qt5'
+        run: "pacman --noconfirm -Syu qt5-base qt5-webchannel qt5-webengine"
+
+      - name: 📋 Install Qt6 Dependencies
+        shell: bash
+        if: matrix.backend == 'Qt6'
+        run: "pacman --noconfirm -Syu qt6-base qt6-declarative qt6-svg qt6-tools qt6-translations qt6-webchannel qt6-webengine"
+
+      - name: 🛸 Checkout Saucer code
+        uses: actions/checkout@v4
+        with:
+          repository: saucer/saucer
+          path: saucer
+          ref: c-bindings # Temporary.
+
+      - name: 🔨 Compile
+        shell: bash
+        run: |
+          export TOOLCHAIN_TARGET="${{ matrix.platform.target }}"
+          cd saucer
+          mkdir build
+          cd build
+          cmake -DCMAKE_TOOLCHAIN_FILE=../zig-cmake/zig-toolchain.cmake .. -Dsaucer_bindings=ON -Dsaucer_backend=${{ matrix.backend }}
+          cmake --build . --config Release
+
+      - name: 📦 Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: "GNU/Linux-${{ matrix.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          path: "saucer/build/bindings/libsaucer-bindings.so"
