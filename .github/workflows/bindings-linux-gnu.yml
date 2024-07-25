@@ -78,10 +78,8 @@ jobs:
       - name: 🔨 Compile
         shell: bash
         run: |
-          export CC="zig"
-          export CXX="zig"
-          export CMAKE_CC_FLAGS_ENV_INIT="cc"
-          export CMAKE_CXX_FLAGS_ENV_INIT="c++"
+          export CC="zig cc"
+          export CXX="zig c++"
           cd saucer
           mkdir build
           cd build
