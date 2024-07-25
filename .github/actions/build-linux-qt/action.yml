@@ -43,7 +43,7 @@ runs:
           --volume $(pwd):/home/container \
           --workdir /home/container \
           --platform linux/${{ inputs.nativeArch }} \
-          "debian:bookworm-slim" \
+          "debian:sid-slim" \
           ./build-linux-gnu.sh ${{ inputs.build-type }} ${{ inputs.backend }} ${{ inputs.arch }}
 
     - name: 📦 Upload Artifact
