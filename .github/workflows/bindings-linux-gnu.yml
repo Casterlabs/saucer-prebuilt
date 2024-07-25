@@ -78,11 +78,12 @@ jobs:
       - name: 🔨 Compile
         shell: bash
         run: |
-          export TOOLCHAIN_TARGET="${{ matrix.platform.target }}"
+          export CC="zig;cc ${{ matrix.platform.target }}"
+          export CXX="zig;c++ ${{ matrix.platform.target }}"
           cd saucer
           mkdir build
           cd build
-          cmake -DCMAKE_TOOLCHAIN_FILE=../zig-cmake/zig-toolchain.cmake .. -Dsaucer_bindings=ON -Dsaucer_backend=${{ matrix.backend }}
+          cmake .. -Dsaucer_bindings=ON -Dsaucer_backend=${{ matrix.backend }}
           cmake --build . --config Release
 
       - name: 📦 Upload Artifact
