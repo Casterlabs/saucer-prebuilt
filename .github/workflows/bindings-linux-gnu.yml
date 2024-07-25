@@ -78,8 +78,10 @@ jobs:
       - name: 🔨 Compile
         shell: bash
         run: |
-          export CC="zig cc"
-          export CXX="zig c++"
+          export CC="zig"
+          export CXX="zig"
+          export CC_FLAGS="cc"
+          export CXX_FLAGS="c++"
           cd saucer
           mkdir build
           cd build
