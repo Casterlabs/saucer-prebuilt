@@ -80,8 +80,8 @@ jobs:
         run: |
           export CC="zig"
           export CXX="zig"
-          export CC_FLAGS="cc"
-          export CXX_FLAGS="c++"
+          export CMAKE_CC_FLAGS_ENV_INIT="cc"
+          export CMAKE_CXX_FLAGS_ENV_INIT="c++"
           cd saucer
           mkdir build
           cd build
