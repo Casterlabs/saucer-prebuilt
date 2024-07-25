@@ -78,8 +78,8 @@ jobs:
       - name: 🔨 Compile
         shell: bash
         run: |
-          export CC="zig:cc ${{ matrix.platform.target }}"
-          export CXX="zig:c++ ${{ matrix.platform.target }}"
+          export CC="zig cc"
+          export CXX="zig c++"
           cd saucer
           mkdir build
           cd build
