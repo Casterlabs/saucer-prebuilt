@@ -18,10 +18,11 @@ jobs:
         build-type:
           - Release
           # - Debug
-        platform: # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
+        platform: # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image | https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=bookworm
           - { arch: "x86_64", nativeArch: "amd64" }
           - { arch: "aarch64", nativeArch: "arm64" }
-          - { arch: "armhf", nativeArch: "arm/v7" }
+          - { arch: "armhf", nativeArch: "arm/v5" }
+          - { arch: "armhf", nativeArch: "arm/v5" }
 
     runs-on: ubuntu-latest
     name: "Linux-Qt5-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
