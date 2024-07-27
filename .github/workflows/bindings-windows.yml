@@ -38,7 +38,11 @@ jobs:
       - name: 🔨 Compile
         shell: cmd
         run: |
-          build-windows.bat ${{ matrix.build-type }} WebView2
+          cd saucer
+          mkdir build 
+          cd build
+          cmake .. -Dsaucer_bindings=ON -Dsaucer_backend=WebView2
+          cmake --build . --config ${{ matrix.build-type }}
 
       - name: 📦 Upload Artifact
         uses: actions/upload-artifact@v4
