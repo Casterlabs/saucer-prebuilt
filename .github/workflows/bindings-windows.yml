@@ -5,9 +5,6 @@ on:
 name: ⛓️ Build C Bindings (Windows + WebView2)
 
 jobs:
-  # ------------------------
-  # WebView2
-  # ------------------------
   build-windows-msvc:
     strategy:
       fail-fast: false
