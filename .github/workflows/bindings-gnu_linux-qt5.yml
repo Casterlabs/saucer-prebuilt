@@ -71,7 +71,7 @@ jobs:
         with:
           command: |
             apt update
-            apt install -y wget build-essential git gcc-14 cmake xvfb gawk
+            apt install -y wget build-essential git gcc-14 cmake xvfb gawk bison
 
       - name: 📋 Install Qt5 dependencies
         uses: ./.github/actions/run-in-container
