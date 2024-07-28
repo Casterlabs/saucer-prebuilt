@@ -26,6 +26,6 @@ runs:
         shell: ${{ inputs.shell }}
         command: |
           cd glibc-saucer/build
-          ../configure --prefix=/opt/glibc-saucer
+          ../configure --prefix=/opt/glibc-saucer --disable-werror
           make -j$(nproc)
           make install
