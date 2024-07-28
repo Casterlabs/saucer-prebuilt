@@ -71,7 +71,7 @@ jobs:
         with:
           command: |
             apt update
-            apt install -y build-essential git gcc-14 cmake xvfb
+            apt install -y wget build-essential git gcc-14 cmake xvfb
 
       - name: 📋 Install Qt5 dependencies
         uses: ./.github/actions/run-in-container
@@ -79,10 +79,19 @@ jobs:
           command: |
             apt install -y qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev
 
+      - name: 📋 Setup target GLibC
+        uses: ./.github/actions/setup-glibc
+
       - name: 🔨 Compile
         uses: ./.github/actions/run-in-container
         with:
           command: |
+            export PATH=/opt/glibc-saucer/bin:$PATH
+            export LD_LIBRARY_PATH=/opt/glibc-saucer/lib:$LD_LIBRARY_PATH
+            export C_INCLUDE_PATH=/opt/glibc-saucer/include:$C_INCLUDE_PATH
+            export CPLUS_INCLUDE_PATH=/opt/glibc-saucer/include:$CPLUS_INCLUDE_PATH
+            export LIBRARY_PATH=/opt/glibc-saucer/lib:$LIBRARY_PATH
+
             cd saucer
             mkdir build
             cd build

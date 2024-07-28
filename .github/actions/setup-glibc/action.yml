@@ -1,0 +1,31 @@
+name: "Setup GLibC"
+
+inputs:
+  shell:
+    required: false
+    default: /bin/bash
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download old GLibC
+      shell: bash # Do this on the host machine since it's faster.
+      env:
+        VERSION: 2.23 # Subject to change.
+      run: |
+        echo "Downloading GLibC $VERSION"
+        wget http://ftp.gnu.org/gnu/libc/glibc-$VERSION.tar.gz
+        tar -xvf glibc-$VERSION.tar.gz
+        mv glibc-$VERSION glibc-saucer
+        cd glibc-saucer
+        mkdir build
+
+    - name: Install old GLibC
+      uses: ./.github/actions/run-in-container
+      with:
+        shell: ${{ inputs.shell }}
+        command: |
+          cd glibc-saucer/build
+          ../configure --prefix=/opt/glibc-saucer
+          make -j$(nproc)
+          make install
