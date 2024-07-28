@@ -18,5 +18,7 @@ runs:
         --interactive \
         --workdir /home/container \
         actioncontainer ${{ inputs.shell }} <<RIC_EOF
+        set -e
+        set -o pipefail
         ${{ inputs.command }}
         RIC_EOF
