@@ -28,4 +28,4 @@ runs:
           cd glibc-saucer/build
           ../configure --prefix=/opt/glibc-saucer --disable-werror
           make -j$(nproc)
-          make install
+          make install -j$(nproc)
