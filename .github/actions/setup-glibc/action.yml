@@ -11,7 +11,7 @@ runs:
     - name: Download old GLibC
       shell: bash # Do this on the host machine since it's faster.
       env:
-        VERSION: 2.38 # Subject to change.
+        VERSION: 2.37 # Subject to change.
       run: |
         echo "Downloading GLibC $VERSION"
         wget http://ftp.gnu.org/gnu/libc/glibc-$VERSION.tar.gz
