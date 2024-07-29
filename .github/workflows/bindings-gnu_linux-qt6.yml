@@ -93,4 +93,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "GNU_Linux-Qt6-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: ${{ matrix.build-type == 'Release' && 'saucer/build/bindings/libsaucer-bindings.so' || 'saucer/build/bindings/**' }}
+          path: "saucer/build/bindings/**"
