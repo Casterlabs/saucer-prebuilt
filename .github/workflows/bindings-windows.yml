@@ -30,7 +30,7 @@ jobs:
         with:
           repository: saucer/saucer
           path: saucer
-          ref: c-bindings # Temporary.
+          ref: very-experimental # Temporary.
 
       - name: 🔨 Compile
         shell: cmd

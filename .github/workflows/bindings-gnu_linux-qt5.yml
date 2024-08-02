@@ -57,7 +57,7 @@ jobs:
         with:
           repository: saucer/saucer
           path: saucer
-          ref: c-bindings # Temporary.
+          ref: very-experimental # Temporary.
 
       - name: 👨‍💻 Setup container
         uses: ./.github/actions/setup-container
