@@ -38,7 +38,7 @@ jobs:
           cd saucer
           mkdir build 
           cd build
-          cmake .. -Dsaucer_bindings=ON -Dsaucer_backend=WebView2
+          cmake .. -Dsaucer_bindings=ON -Dsaucer_msvc_hack=ON -Dsaucer_backend=WebView2
           cmake --build . --config ${{ matrix.build-type }}
 
       - name: 📦 Upload Artifact
