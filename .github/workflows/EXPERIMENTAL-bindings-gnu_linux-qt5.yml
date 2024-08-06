@@ -1,0 +1,90 @@
+on:
+  push:
+  pull_request:
+
+name: ⚠️ Build EXPERIMENTAL C Bindings (GNU/Linux + Qt5)
+
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true # Shut up. https://github.blog/changelog/2023-06-13-github-actions-all-actions-will-run-on-node16-instead-of-node12-by-default/
+
+jobs:
+  experimental-build-gnu_linux-qt5:
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type:
+          # - Release
+          - Debug
+        platform:
+          # Check these for architecture compatibility:
+          # https://packages.debian.org/search?searchon=names&keywords=qtwebengine5
+          # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
+          # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
+          # - {
+          #     # Not working at the moment, TODO
+          #     arch: "x86",
+          #     qemuArch: "linux/386",
+          #     dockerArch: SAME_AS_QEMU,
+          #   }
+          - {
+              #
+              arch: "aarch64",
+              qemuArch: "linux/arm64/v8",
+              dockerArch: SAME_AS_QEMU,
+            }
+          - {
+              # el in LLVM, le in qemu/docker.
+              arch: "mips64el",
+              qemuArch: "linux/mips64le",
+              dockerArch: SAME_AS_QEMU,
+            }
+
+    runs-on: ubuntu-latest
+    name: "EXPERIMENTAL-GNU_Linux-Qt5-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+
+    steps:
+      - name: 📥 Checkout actions code
+        uses: actions/checkout@v4
+
+      - name: 🛸 Checkout Saucer code
+        uses: actions/checkout@v4
+        with:
+          repository: saucer/saucer
+          path: saucer
+          ref: very-experimental # Temporary.
+
+      - name: 👨‍💻 Setup container
+        uses: ./.github/actions/setup-container
+        with:
+          qemuArch: ${{ matrix.platform.qemuArch }}
+          dockerArch: ${{ matrix.platform.dockerArch }}
+          image: "debian:sid-slim"
+
+      - name: 📋 Install dependencies
+        uses: ./.github/actions/run-in-container
+        with:
+          command: |
+            apt update
+            apt install -y build-essential git gcc-14 cmake xvfb
+
+      - name: 📋 Install Qt5 dependencies
+        uses: ./.github/actions/run-in-container
+        with:
+          command: |
+            apt install -y qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev
+
+      - name: 🔨 Compile
+        uses: ./.github/actions/run-in-container
+        with:
+          command: |
+            cd saucer
+            mkdir build
+            cd build
+            cmake .. -Dsaucer_bindings=ON -Dsaucer_backend=Qt5
+            cmake --build . --config Release
+
+      - name: 📦 Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: "GNU_Linux-Qt5-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          path: "saucer/build/bindings/**"

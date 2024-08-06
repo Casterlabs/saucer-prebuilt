@@ -15,32 +15,10 @@ jobs:
         build-type:
           - Release
           - Debug
-        platform:
-          # Check these for architecture compatibility:
-          # https://packages.debian.org/search?searchon=names&keywords=qt6-webengine-dev
-          # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
-          # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
-          - {
-              #
-              arch: "x86_64",
-              qemuArch: "linux/amd64",
-              dockerArch: SAME_AS_QEMU,
-            }
-          # - {
-          #     # Not working at the moment, TODO
-          #     arch: "x86",
-          #     qemuArch: "linux/386",
-          #     dockerArch: SAME_AS_QEMU,
-          #   }
-          - {
-              #
-              arch: "aarch64",
-              qemuArch: "linux/arm64/v8",
-              dockerArch: SAME_AS_QEMU,
-            }
 
     runs-on: ubuntu-latest
-    name: "GNU_Linux-Qt6-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+    container: archlinux:base-devel
+    name: "GNU_Linux-Qt6-x86_64-${{ matrix.build-type }}"
 
     steps:
       - name: 📥 Checkout actions code
@@ -53,36 +31,17 @@ jobs:
           path: saucer
           ref: very-experimental # Temporary.
 
-      - name: 👨‍💻 Setup container
-        uses: ./.github/actions/setup-container
-        with:
-          qemuArch: ${{ matrix.platform.qemuArch }}
-          dockerArch: ${{ matrix.platform.dockerArch }}
-          image: "debian:sid-slim"
-
       - name: 📋 Install dependencies
-        uses: ./.github/actions/run-in-container
-        with:
-          command: |
-            apt update
-            apt install -y build-essential git gcc-14 cmake xvfb
+        shell: bash
+        run: pacman --noconfirm -Syu cmake gcc git xorg-server-xvfb xorg-xwd
 
       - name: 📋 Install Qt6 dependencies
-        uses: ./.github/actions/run-in-container
-        with:
-          command: |
-            apt install -y qt6-base-dev qt6-tools-dev qt6-declarative-dev qt6-webchannel-dev qt6-webengine-dev qt6-svg-dev
+        shell: bash
+        run: pacman --noconfirm -Syu qt6-base qt6-declarative qt6-svg qt6-tools qt6-translations qt6-webchannel qt6-webengine
 
       - name: 🔨 Compile
-        uses: ./.github/actions/run-in-container
-        with:
-          command: |
-            if [ "${{ matrix.platform.arch }}" == "armel" ]; then
-              export TARGET_ARCH="armv6+nofp"
-            elif [ "${{ matrix.platform.arch }}" == "armhf" ]; then
-              export TARGET_ARCH="armv6+fp"
-            fi
-
+        shell: bash
+        run: |
             cd saucer
             mkdir build
             cd build
@@ -92,5 +51,5 @@ jobs:
       - name: 📦 Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "GNU_Linux-Qt6-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          name: "GNU_Linux-Qt6-x86_64-${{ matrix.build-type }}"
           path: "saucer/build/bindings/**"

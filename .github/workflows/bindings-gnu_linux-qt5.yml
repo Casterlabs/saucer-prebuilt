@@ -15,38 +15,10 @@ jobs:
         build-type:
           - Release
           - Debug
-        platform:
-          # Check these for architecture compatibility:
-          # https://packages.debian.org/search?searchon=names&keywords=qtwebengine5
-          # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
-          # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
-          - {
-              #
-              arch: "x86_64",
-              qemuArch: "linux/amd64",
-              dockerArch: SAME_AS_QEMU,
-            }
-          # - {
-          #     # Not working at the moment, TODO
-          #     arch: "x86",
-          #     qemuArch: "linux/386",
-          #     dockerArch: SAME_AS_QEMU,
-          #   }
-          - {
-              #
-              arch: "aarch64",
-              qemuArch: "linux/arm64/v8",
-              dockerArch: SAME_AS_QEMU,
-            }
-          - {
-              # el in LLVM, le in qemu/docker.
-              arch: "mips64el",
-              qemuArch: "linux/mips64le",
-              dockerArch: SAME_AS_QEMU,
-            }
 
     runs-on: ubuntu-latest
-    name: "GNU_Linux-Qt5-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+    container: archlinux:base-devel
+    name: "GNU_Linux-Qt5-x86_64-${{ matrix.build-type }}"
 
     steps:
       - name: 📥 Checkout actions code
@@ -59,30 +31,17 @@ jobs:
           path: saucer
           ref: very-experimental # Temporary.
 
-      - name: 👨‍💻 Setup container
-        uses: ./.github/actions/setup-container
-        with:
-          qemuArch: ${{ matrix.platform.qemuArch }}
-          dockerArch: ${{ matrix.platform.dockerArch }}
-          image: "debian:sid-slim"
-
       - name: 📋 Install dependencies
-        uses: ./.github/actions/run-in-container
-        with:
-          command: |
-            apt update
-            apt install -y build-essential git gcc-14 cmake xvfb
+        shell: bash
+        run: pacman --noconfirm -Syu cmake gcc git xorg-server-xvfb xorg-xwd
 
       - name: 📋 Install Qt5 dependencies
-        uses: ./.github/actions/run-in-container
-        with:
-          command: |
-            apt install -y qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev
+        shell: bash
+        run: pacman --noconfirm -Syu qt5-base qt5-webchannel qt5-webengine
 
       - name: 🔨 Compile
-        uses: ./.github/actions/run-in-container
-        with:
-          command: |
+        shell: bash
+        run: |
             cd saucer
             mkdir build
             cd build
@@ -92,5 +51,5 @@ jobs:
       - name: 📦 Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "GNU_Linux-Qt5-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          name: "GNU_Linux-Qt5-x86_64-${{ matrix.build-type }}"
           path: "saucer/build/bindings/**"
