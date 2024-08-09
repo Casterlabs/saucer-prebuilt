@@ -24,12 +24,12 @@ jobs:
       - name: 📥 Checkout actions code
         uses: actions/checkout@v4
 
-      - name: 🛸 Checkout Saucer code
+      - name: 🛸 Checkout Saucer bindings code
         uses: actions/checkout@v4
         with:
-          repository: saucer/saucer
+          repository: saucer/bindings
           path: saucer
-          ref: very-experimental # Temporary.
+          ref: main
 
       - name: 📋 Install dependencies
         shell: bash
@@ -43,10 +43,8 @@ jobs:
         shell: bash
         run: |
             cd saucer
-            mkdir build
-            cd build
-            cmake .. -Dsaucer_bindings=ON -Dsaucer_backend=Qt5
-            cmake --build . --config ${{ matrix.build-type }}
+            cmake -B build -Dsaucer_backend=Qt5
+            cmake --build build --config ${{ matrix.build-type }}
 
       - name: 📦 Upload Artifact
         uses: actions/upload-artifact@v4
