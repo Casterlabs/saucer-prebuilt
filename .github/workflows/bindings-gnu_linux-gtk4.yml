@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         build-type:
-          # - Release
-          - Debug
+          - Release
+          # - Debug
         platform:
           # Check these for architecture compatibility:
           # https://packages.debian.org/search?searchon=names&keywords=libgtk-4-dev
