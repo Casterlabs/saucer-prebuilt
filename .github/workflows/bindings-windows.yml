@@ -43,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: "saucer/build/bindings/${{ matrix.build-type }}/**"
+          path: "saucer/build/${{ matrix.build-type }}/**"
