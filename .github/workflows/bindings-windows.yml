@@ -2,7 +2,7 @@ on:
   push:
   pull_request:
 
-name: ⛓️ Build C Bindings (Windows + WebView2)
+name: ⛓️ Windows + WebView2
 
 jobs:
   build-windows-msvc:

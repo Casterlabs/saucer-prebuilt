@@ -2,7 +2,7 @@ on:
   push:
   pull_request:
 
-name: ⚠️ Build EXPERIMENTAL C Bindings (GNU/Linux + Qt6)
+name: ⚠️ GNU/Linux + Qt6 EXPERIMENTAL
 
 env:
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true # Shut up. https://github.blog/changelog/2023-06-13-github-actions-all-actions-will-run-on-node16-instead-of-node12-by-default/
