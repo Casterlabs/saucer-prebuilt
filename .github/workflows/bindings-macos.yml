@@ -1,0 +1,44 @@
+on:
+  push:
+  pull_request:
+
+name: ⛓️ macOS + WebKit
+
+jobs:
+  build-macos-arm:
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type:
+          - Release
+          - Debug
+        platform: # https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
+          - { arch: x86_64, os: macos-12 }
+          - { arch: aarch64, os: macos-14 }
+
+    runs-on: ${{ matrix.platform.os }}
+    name: "macOS-WebKit-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+
+    steps:
+      - name: 📥 Checkout actions code
+        uses: actions/checkout@v4
+
+      - name: 🛸 Checkout Saucer bindings code
+        uses: actions/checkout@v4
+        with:
+          repository: saucer/bindings
+          path: saucer
+          ref: main
+
+      - name: 🔨 Compile
+        shell: bash
+        run: |
+          cd saucer
+          cmake -B build -Dsaucer_backend=WebKit
+          cmake --build build --config ${{ matrix.build-type }}
+
+      - name: 📦 Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: "macOS-WebKit-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          path: "saucer/build/**"
