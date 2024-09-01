@@ -13,7 +13,7 @@ jobs:
           - Release
           - Debug
         platform: # https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
-          - { arch: x86_64, os: macos-13 }
+          # - { arch: x86_64, os: macos-13 }
           - { arch: aarch64, os: macos-14 }
 
     runs-on: ${{ matrix.platform.os }}
