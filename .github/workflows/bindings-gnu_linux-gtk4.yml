@@ -91,4 +91,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "GNU_Linux-WebKitGtk-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: "saucer/build/**"
+          path: "saucer/build/libsaucer-bindings.so"

@@ -50,4 +50,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "GNU_Linux-Qt5-x86_64-${{ matrix.build-type }}"
-          path: "saucer/build/**"
+          path: "saucer/build/libsaucer-bindings.so"
