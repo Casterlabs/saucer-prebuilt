@@ -73,7 +73,7 @@ jobs:
         uses: ./.github/actions/run-in-container
         with:
           command: |
-            apt install -y libgtk-4-1-dev libwebkitgtk-6.0-dev libadwaita-1-0
+            apt install -y libgtk-4-1 libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0
 
       - name: 🔨 Compile
         uses: ./.github/actions/run-in-container
