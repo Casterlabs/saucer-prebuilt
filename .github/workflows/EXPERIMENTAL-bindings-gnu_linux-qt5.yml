@@ -32,12 +32,12 @@ jobs:
               qemuArch: "linux/arm64/v8",
               dockerArch: SAME_AS_QEMU,
             }
-          - {
-              # el in LLVM, le in qemu/docker.
-              arch: "mips64el",
-              qemuArch: "linux/mips64le",
-              dockerArch: SAME_AS_QEMU,
-            }
+          # - {
+          #     # el in LLVM, le in qemu/docker.
+          #     arch: "mips64el",
+          #     qemuArch: "linux/mips64le",
+          #     dockerArch: SAME_AS_QEMU,
+          #   }
 
     runs-on: ubuntu-latest
     name: "EXPERIMENTAL-GNU_Linux-Qt5-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
