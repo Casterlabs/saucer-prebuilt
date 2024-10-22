@@ -12,8 +12,8 @@ jobs:
         build-type:
           - Release
           - Debug
-        platform: # https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
-          # - { arch: x86_64, os: macos-13 }
+        platform: 
+          - { arch: x86_64, os: [self-hosted, macOS, x64, macos14-intel] } # Self hosted runner, thanks Max!
           - { arch: aarch64, os: macos-14 }
 
     runs-on: ${{ matrix.platform.os }}
