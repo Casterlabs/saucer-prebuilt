@@ -37,7 +37,7 @@ jobs:
 
       - name: 📋 Install dependencies
         shell: bash
-        run: pacman --noconfirm -Syu cmake gcc git xorg-server-xvfb xorg-xwd
+        run: pacman --noconfirm -Syu cmake gcc git xorg-server-xvfb xorg-xwd p7zip
 
       - name: 📋 Install Qt5 dependencies
         shell: bash
@@ -82,7 +82,7 @@ jobs:
 
       - name: 📋 Install dependencies
         shell: bash
-        run: pacman --noconfirm -Syu cmake gcc git xorg-server-xvfb xorg-xwd
+        run: pacman --noconfirm -Syu cmake gcc git xorg-server-xvfb xorg-xwd p7zip
 
       - name: 📋 Install Qt6 dependencies
         shell: bash
