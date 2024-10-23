@@ -46,3 +46,4 @@ jobs:
         with:
           name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
           path: "saucer/build/${{ matrix.build-type }}/**"
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -9,6 +9,10 @@ inputs:
     required: true
     description: "The filename (excluding extension)"
 
+  token:
+    required: true
+    description: "Use secrets.GITHUB_TOKEN"
+
 runs:
   using: "composite"
   steps:
@@ -28,7 +32,7 @@ runs:
       uses: svenstaro/upload-release-action@v2
       if: github.event_name == 'release' && github.event.action == 'created'
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        repo_token: ${{ inputs.token }}
         file: "${{ inputs.name }}.zip"
         asset_name: "${{ inputs.name }}.zip"
         tag: ${{ github.ref }}
