@@ -13,8 +13,6 @@ inputs:
     required: true
     description: "The docker image to use"
 
-matrix:
-
 runs:
   using: "composite"
   steps:
