@@ -22,11 +22,14 @@ runs:
         name: ${{ inputs.name }}
         path: ${{ inputs.path }}
 
-    - name: Create archive for release
-      uses: edgarrc/action-7z@v1
+    - name: Setup 7-Zip
       if: github.event_name == 'release' && github.event.action == 'created'
-      with:
-        args: 7z a "${{ inputs.name }}.zip" "${{ inputs.path }}" -r
+      uses: milliewalky/setup-7-zip@v1
+
+    - name: Create archive for release
+      if: github.event_name == 'release' && github.event.action == 'created'
+      shell: cmd
+      run: 7z a "${{ inputs.name }}.zip" "${{ inputs.path }}" -r
 
     - name: Upload to release
       uses: svenstaro/upload-release-action@v2
