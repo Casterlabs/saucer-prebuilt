@@ -1,0 +1,34 @@
+name: "Upload artifact"
+
+inputs:
+  path:
+    required: true
+    description: "The folder or file you wish to capture."
+
+  name:
+    required: true
+    description: "The filename (excluding extension)"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}
+
+    - name: Create archive for release
+      uses: edgarrc/action-7z@v1
+      if: github.event_name == 'release' && github.event.action == 'created'
+      with:
+        args: 7z a "${{ inputs.name }}.zip" "${{ inputs.path }}" -r
+
+    - name: Upload to release
+      uses: svenstaro/upload-release-action@v2
+      if: github.event_name == 'release' && github.event.action == 'created'
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: "${{ inputs.name }}.zip"
+        asset_name: "${{ inputs.name }}.zip"
+        tag: ${{ github.ref }}

@@ -1,6 +1,8 @@
 on:
   push:
   pull_request:
+  release: 
+    types: [created]
 
 name: ⛓️ Windows + WebView2
 
@@ -11,7 +13,7 @@ jobs:
       matrix:
         build-type:
           - Release
-          - Debug
+          # - Debug
         platform:
           # - { arch: x86, nativeArch: x86 }
           - { arch: x86_64, nativeArch: x64 }
@@ -40,7 +42,7 @@ jobs:
           cmake --build build --config ${{ matrix.build-type }}
 
       - name: 📦 Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: ./.github/actions/upload-artifact
         with:
           name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
           path: "saucer/build/${{ matrix.build-type }}/**"
