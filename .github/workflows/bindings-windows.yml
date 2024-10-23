@@ -6,7 +6,7 @@ on:
   release: 
     types: [created]
 
-name: ⛓️ Windows + WebView2
+name: ⛓️ Windows
 
 jobs:
   build-windows-msvc:
