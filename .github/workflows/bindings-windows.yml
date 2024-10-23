@@ -47,5 +47,5 @@ jobs:
         uses: ./.github/actions/upload-artifact
         with:
           name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: "saucer/build/${{ matrix.build-type }}/**"
+          path: "saucer/build/${{ matrix.build-type }}/saucer-bindings.dll"
           token: ${{ secrets.GITHUB_TOKEN }}
