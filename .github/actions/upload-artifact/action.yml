@@ -24,7 +24,7 @@ runs:
 
     - name: Create archive for release
       if: github.event_name == 'release' && github.event.action == 'created'
-      shell: cmd
+      shell: bash
       run: 7z a "${{ inputs.name }}.zip" "${{ github.workspace }}/${{ inputs.path }}" -r
 
     - name: Upload to release
