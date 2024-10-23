@@ -51,8 +51,9 @@ jobs:
             cmake --build build --config ${{ matrix.build-type }}
 
       - name: 📦 Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: ./.github/actions/upload-artifact
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           name: "GNU_Linux-Qt5-x86_64-${{ matrix.build-type }}"
           path: "saucer/build/libsaucer-bindings.so"
 
@@ -95,8 +96,9 @@ jobs:
             cmake --build build --config ${{ matrix.build-type }}
 
       - name: 📦 Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: ./.github/actions/upload-artifact
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           name: "GNU_Linux-Qt6-x86_64-${{ matrix.build-type }}"
           path: "saucer/build/libsaucer-bindings.so"
 
@@ -180,7 +182,8 @@ jobs:
             cmake --build build --config ${{ matrix.build-type }}
 
       - name: 📦 Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: ./.github/actions/upload-artifact
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           name: "GNU_Linux-WebKitGtk-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
           path: "saucer/build/libsaucer-bindings.so"

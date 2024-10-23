@@ -42,7 +42,8 @@ jobs:
           cmake --build build --config ${{ matrix.build-type }}
 
       - name: 📦 Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: ./.github/actions/upload-artifact
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           name: "macOS-WebKit-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
           path: "saucer/build/libsaucer-bindings.dylib"
