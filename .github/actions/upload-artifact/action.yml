@@ -22,10 +22,6 @@ runs:
         name: ${{ inputs.name }}
         path: ${{ inputs.path }}
 
-    - name: Setup 7-Zip
-      if: github.event_name == 'release' && github.event.action == 'created'
-      uses: milliewalky/setup-7-zip@v1
-
     - name: Create archive for release
       if: github.event_name == 'release' && github.event.action == 'created'
       shell: cmd
