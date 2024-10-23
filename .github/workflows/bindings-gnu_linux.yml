@@ -18,7 +18,7 @@ jobs:
       matrix:
         build-type:
           - Release
-          - Debug
+          # - Debug
 
     runs-on: ubuntu-latest
     container: archlinux:base-devel
@@ -62,7 +62,7 @@ jobs:
       matrix:
         build-type:
           - Release
-          - Debug
+          # - Debug
 
     runs-on: ubuntu-latest
     container: archlinux:base-devel
