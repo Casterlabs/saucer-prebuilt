@@ -39,7 +39,7 @@ jobs:
       - name: 🔨 Compile
         uses: ./.github/actions/compile
         with:
-          backend: WebView2-Hack
+          backend: WebView2
           platform: Windows
           build-type: ${{ matrix.build-type }}
           cmake-args: -Dsaucer_msvc_hack=ON -Dsaucer_serializer=Rflpp
