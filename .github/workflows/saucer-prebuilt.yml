@@ -1,0 +1,245 @@
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+  release:
+    types: [created]
+
+name: ⛓️ Saucer Prebuilt
+
+jobs:
+  build-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type:
+          - Release
+          # - Debug
+        platform:
+          # - { arch: x86 }
+          - { arch: x86_64 }
+
+    runs-on: windows-latest
+    name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+
+    steps:
+      - name: 📥 Checkout actions code
+        uses: actions/checkout@v4
+
+      - name: 🛸 Checkout Saucer bindings code
+        uses: actions/checkout@v4
+        with:
+          repository: saucer/bindings
+          path: bindings
+          ref: main
+
+      - name: 🔨 Compile
+        uses: ./.github/actions/compile
+        with:
+          backend: WebView2
+          platform: Windows
+          build-type: ${{ matrix.build-type }}
+          cmake-args: -Dsaucer_msvc_hack=ON -Dsaucer_serializer=Rflpp
+
+      - name: ⚙️ Reorganize files
+        shell: bash
+        run: |
+          mkdir to_upload
+          cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.dll" to_upload
+          cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.dll" to_upload
+          cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.dll" to_upload
+          cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.dll" to_upload
+
+      - name: 📦 Upload Artifact
+        uses: ./.github/actions/upload-artifact
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          path: "to_upload"
+
+  build-macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type:
+          - Release
+          # - Debug
+        platform:
+          # - { arch: x86_64, os: [self-hosted, macOS, x64, macos14-intel] } # Self hosted runner, thanks Max!
+          - { arch: aarch64, os: macos-14 }
+
+    runs-on: ${{ matrix.platform.os }}
+    name: "macOS-WebKit-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+
+    steps:
+      - name: 📥 Checkout actions code
+        uses: actions/checkout@v4
+
+      - name: 🛸 Checkout Saucer bindings code
+        uses: actions/checkout@v4
+        with:
+          repository: saucer/bindings
+          path: bindings
+          ref: main
+
+      - name: 🔨 Compile
+        uses: ./.github/actions/compile
+        with:
+          backend: WebKit
+          platform: macOS
+          build-type: ${{ matrix.build-type }}
+
+      - name: ⚙️ Reorganize files
+        shell: bash
+        run: |
+          mkdir to_upload
+          cp "bindings/libsaucer-bindings.dylib" to_upload
+          cp "bindings/_deps/saucer-build/libsaucer.dylib" to_upload
+          cp "bindings/modules/desktop/libsaucer-bindings-desktop.dylib" to_upload
+          cp "bindings/modules/pdf/libsaucer-bindings-pdf.dylib" to_upload
+
+      - name: 📦 Upload Artifact
+        uses: ./.github/actions/upload-artifact
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: "macOS-WebKit-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          path: "to_upload"
+
+  build-gnu_linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type:
+          - Release
+          # - Debug
+        platform:
+          # Check these for architecture compatibility:
+          # https://packages.debian.org/search?searchon=names&keywords=qtwebengine5
+          # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
+          # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
+          - {
+              backend: Qt5,
+              image: "archlinux:base-devel",
+              arch: "x86_64",
+              qemuArch: "linux/amd64",
+              dockerArch: SAME_AS_QEMU,
+              deps: "pacman --noconfirm -Syu cmake gcc git xorg-server-xvfb xorg-xwd p7zip qt5-base qt5-webchannel qt5-webengine",
+            }
+          - {
+              backend: Qt5,
+              image: "debian:sid-slim",
+              arch: "aarch64",
+              qemuArch: "linux/arm64/v8",
+              dockerArch: SAME_AS_QEMU,
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev",
+            }
+
+          # Check these for architecture compatibility:
+          # https://packages.debian.org/search?searchon=names&keywords=qt6-webengine-dev
+          # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
+          # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
+          - {
+              backend: Qt6,
+              image: "archlinux:base-devel",
+              arch: "x86_64",
+              qemuArch: "linux/amd64",
+              dockerArch: "SAME_AS_QEMU",
+              deps: "pacman --noconfirm -Syu cmake gcc git xorg-server-xvfb xorg-xwd p7zip qt6-base qt6-declarative qt6-svg qt6-tools qt6-translations qt6-webchannel qt6-webengine",
+            }
+          - {
+              backend: Qt6,
+              image: "debian:sid-slim",
+              arch: "aarch64",
+              qemuArch: "linux/arm64/v8",
+              dockerArch: "SAME_AS_QEMU",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qt6-base-dev qt6-tools-dev qt6-declarative-dev qt6-webchannel-dev qt6-webengine-dev qt6-svg-dev",
+            }
+
+          # Check these for architecture compatibility:
+          # https://packages.debian.org/search?searchon=names&keywords=libgtk-4-dev
+          # https://hub.docker.com/_/gcc/tags?page=&page_size=&ordering=&name=bookworm
+          # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
+          - {
+              backend: WebKitGtk,
+              image: "gcc:14.2.0-bookworm",
+              arch: "x86_64",
+              qemuArch: "linux/amd64",
+              dockerArch: "SAME_AS_QEMU",
+              deps: "apt update && apt install -y build-essential git cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+            }
+          - {
+              backend: WebKitGtk,
+              image: "gcc:14.2.0-bookworm",
+              arch: "aarch64",
+              qemuArch: "linux/arm64",
+              dockerArch: "SAME_AS_QEMU",
+              deps: "apt update && apt install -y build-essential git cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+            }
+          - {
+              backend: WebKitGtk,
+              image: "gcc:14.2.0-bookworm",
+              arch: "arm",
+              qemuArch: "linux/arm/v5",
+              dockerArch: "SAME_AS_QEMU",
+              deps: "apt update && apt install -y build-essential git cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+            }
+          - {
+              backend: WebKitGtk,
+              image: "gcc:14.2.0-bookworm",
+              arch: "ppc64le",
+              qemuArch: "linux/ppc64le",
+              dockerArch: "SAME_AS_QEMU",
+              deps: "apt update && apt install -y build-essential git cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+            }
+
+    runs-on: ubuntu-latest
+    name: "GNU_Linux-${{ matrix.platform.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+
+    steps:
+      - name: 📥 Checkout actions code
+        uses: actions/checkout@v4
+
+      - name: 🛸 Checkout Saucer bindings code
+        uses: actions/checkout@v4
+        with:
+          repository: saucer/bindings
+          path: bindings
+          ref: main
+
+      - name: 👨‍💻 Setup container
+        uses: ./.github/actions/setup-container
+        with:
+          qemuArch: ${{ matrix.platform.qemuArch }}
+          dockerArch: ${{ matrix.platform.dockerArch }}
+          image: ${{ matrix.platform.image }}
+
+      - name: 📋 Install dependencies
+        uses: ./.github/actions/run-in-container
+        with:
+          command: ${{ matrix.platform.deps }}
+
+      - name: 🔨 Compile
+        uses: ./.github/actions/compile
+        with:
+          backend: ${{ matrix.platform.backend }}
+          platform: Linux
+          build-type: ${{ matrix.build-type }}
+          in-container: true
+          arm-hack: ${{ matrix.platform.arch }}
+
+      - name: ⚙️ Reorganize files
+        shell: bash
+        run: |
+          mkdir to_upload
+          cp "bindings/libsaucer-bindings.so" to_upload
+          cp "bindings/_deps/saucer-build/libsaucer.so" to_upload
+          cp "bindings/modules/desktop/libsaucer-bindings-desktop.so" to_upload
+          cp "bindings/modules/pdf/libsaucer-bindings-pdf.so" to_upload
+
+      - name: 📦 Upload Artifact
+        uses: ./.github/actions/upload-artifact
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: "GNU_Linux-${{ matrix.platform.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          path: "to_upload"
