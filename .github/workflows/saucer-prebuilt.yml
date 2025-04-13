@@ -118,41 +118,13 @@ jobs:
           # https://packages.debian.org/search?searchon=names&keywords=qtwebengine5-dev
           # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
           # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
-          - {
-              backend: Qt5,
-              image: "debian:sid-slim",
-              arch: "x86_64",
-              qemuArch: "linux/amd64",
-              dockerArch: SAME_AS_QEMU,
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev",
-            }
-          - {
-              backend: Qt5,
-              image: "debian:sid-slim",
-              arch: "x86",
-              qemuArch: "linux/386",
-              dockerArch: SAME_AS_QEMU,
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev",
-            }
-          - {
-              backend: Qt5,
-              image: "debian:sid-slim",
-              arch: "aarch64",
-              qemuArch: "linux/arm64/v8",
-              dockerArch: SAME_AS_QEMU,
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev",
-            }
-          - {
-              backend: Qt5,
-              image: "debian:sid-slim",
-              arch: "mips64el", # el in LLVM, le in qemu/docker.
-              qemuArch: "linux/mips64le",
-              dockerArch: SAME_AS_QEMU,
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev",
-            }
+          - { arch: "x86_64", qemuArch: "linux/amd64" }
+          - { arch: "x86", qemuArch: "linux/386" }
+          - { arch: "aarch64", qemuArch: "linux/arm64/v8" }
+          - { arch: "mips64el", qemuArch: "linux/mips64le" } # el in LLVM, le in qemu/docker.
 
     runs-on: ubuntu-latest
-    name: "GNU_Linux-${{ matrix.platform.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+    name: "GNU_Linux-Qt5-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
 
     steps:
       - name: 📥 Checkout actions code
@@ -169,18 +141,18 @@ jobs:
         uses: ./.github/actions/setup-container
         with:
           qemuArch: ${{ matrix.platform.qemuArch }}
-          dockerArch: ${{ matrix.platform.dockerArch }}
-          image: ${{ matrix.platform.image }}
+          dockerArch: ${{ matrix.platform.dockerArch || 'SAME_AS_QEMU' }}
+          image: "debian:sid-slim"
 
       - name: 📋 Install dependencies
         uses: ./.github/actions/run-in-container
         with:
-          command: ${{ matrix.platform.deps }}
+          command: apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev
 
       - name: 🔨 Compile
         uses: ./.github/actions/compile
         with:
-          backend: ${{ matrix.platform.backend }}
+          backend: Qt5
           platform: Linux
           build-type: ${{ matrix.build-type }}
           in-container: true
@@ -199,7 +171,7 @@ jobs:
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: "GNU_Linux-${{ matrix.platform.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          name: "GNU_Linux-Qt5-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
           path: "to_upload"
 
   build-gnu_linux_qt6:
@@ -214,33 +186,12 @@ jobs:
           # https://packages.debian.org/search?searchon=names&keywords=qt6-webengine-dev
           # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
           # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
-          - {
-              backend: Qt6,
-              image: "debian:sid-slim",
-              arch: "x86_64",
-              qemuArch: "linux/amd64",
-              dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qt6-base-dev qt6-tools-dev qt6-declarative-dev qt6-webchannel-dev qt6-webengine-dev qt6-svg-dev",
-            }
-          - {
-              backend: Qt6,
-              image: "debian:sid-slim",
-              arch: "x86",
-              qemuArch: "linux/386",
-              dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qt6-base-dev qt6-tools-dev qt6-declarative-dev qt6-webchannel-dev qt6-webengine-dev qt6-svg-dev",
-            }
-          - {
-              backend: Qt6,
-              image: "debian:sid-slim",
-              arch: "aarch64",
-              qemuArch: "linux/arm64/v8",
-              dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qt6-base-dev qt6-tools-dev qt6-declarative-dev qt6-webchannel-dev qt6-webengine-dev qt6-svg-dev",
-            }
+          - { arch: "x86_64", qemuArch: "linux/amd64" }
+          - { arch: "x86", qemuArch: "linux/386" }
+          - { arch: "aarch64", qemuArch: "linux/arm64/v8" }
 
     runs-on: ubuntu-latest
-    name: "GNU_Linux-${{ matrix.platform.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+    name: "GNU_Linux-Qt6-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
 
     steps:
       - name: 📥 Checkout actions code
@@ -257,18 +208,18 @@ jobs:
         uses: ./.github/actions/setup-container
         with:
           qemuArch: ${{ matrix.platform.qemuArch }}
-          dockerArch: ${{ matrix.platform.dockerArch }}
-          image: ${{ matrix.platform.image }}
+          dockerArch: ${{ matrix.platform.dockerArch || 'SAME_AS_QEMU' }}
+          image: "debian:sid-slim"
 
       - name: 📋 Install dependencies
         uses: ./.github/actions/run-in-container
         with:
-          command: ${{ matrix.platform.deps }}
+          command: apt update && apt install -y build-essential git gcc-14 cmake xvfb qt6-base-dev qt6-tools-dev qt6-declarative-dev qt6-webchannel-dev qt6-webengine-dev qt6-svg-dev
 
       - name: 🔨 Compile
         uses: ./.github/actions/compile
         with:
-          backend: ${{ matrix.platform.backend }}
+          backend: Qt6
           platform: Linux
           build-type: ${{ matrix.build-type }}
           in-container: true
@@ -287,7 +238,7 @@ jobs:
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: "GNU_Linux-${{ matrix.platform.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          name: "GNU_Linux-Qt6-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
           path: "to_upload"
 
   build-gnu_linux_gtk:
@@ -302,73 +253,17 @@ jobs:
           # https://packages.debian.org/search?searchon=names&keywords=libgtk-4-dev
           # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
           # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
-          - {
-              backend: WebKitGtk,
-              image: "debian:sid-slim",
-              arch: "x86_64",
-              qemuArch: "linux/amd64",
-              dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
-            }
-          - {
-              backend: WebKitGtk,
-              image: "debian:sid-slim",
-              arch: "x86",
-              qemuArch: "linux/386",
-              dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
-            }
-          - {
-              backend: WebKitGtk,
-              image: "debian:sid-slim",
-              arch: "aarch64",
-              qemuArch: "linux/arm64",
-              dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
-            }
-          - {
-              backend: WebKitGtk,
-              image: "debian:sid-slim",
-              arch: "arm",
-              qemuArch: "linux/arm/v5",
-              dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
-            }
-          - {
-              backend: WebKitGtk,
-              image: "debian:sid-slim",
-              arch: "ppc64le",
-              qemuArch: "linux/ppc64le",
-              dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
-            }
-          - {
-              backend: WebKitGtk,
-              image: "debian:sid-slim",
-              arch: "riscv64",
-              qemuArch: "linux/riscv64",
-              dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
-            }
-          - {
-              backend: WebKitGtk,
-              image: "debian:sid-slim",
-              arch: "s390x",
-              qemuArch: "linux/s390x",
-              dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
-            }
-          - {
-              backend: WebKitGtk,
-              image: "debian:sid-slim",
-              arch: "mips64el", # el in LLVM, le in qemu/docker.
-              qemuArch: "linux/mips64le",
-              dockerArch: SAME_AS_QEMU,
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
-            }
+          - { arch: "x86_64", qemuArch: "linux/amd64" }
+          - { arch: "x86", qemuArch: "linux/386" }
+          - { arch: "aarch64", qemuArch: "linux/arm64" }
+          - { arch: "arm", qemuArch: "linux/arm/v5" }
+          - { arch: "ppc64le", qemuArch: "linux/ppc64le" }
+          - { arch: "riscv64", qemuArch: "linux/riscv64" }
+          - { arch: "s390x", qemuArch: "linux/s390x" }
+          - { arch: "mips64el", qemuArch: "linux/mips64le" } # el in LLVM, le in qemu/docker.
 
     runs-on: ubuntu-latest
-    name: "GNU_Linux-${{ matrix.platform.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+    name: "GNU_Linux-WebKitGtk-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
 
     steps:
       - name: 📥 Checkout actions code
@@ -385,18 +280,18 @@ jobs:
         uses: ./.github/actions/setup-container
         with:
           qemuArch: ${{ matrix.platform.qemuArch }}
-          dockerArch: ${{ matrix.platform.dockerArch }}
-          image: ${{ matrix.platform.image }}
+          dockerArch: ${{ matrix.platform.dockerArch || 'SAME_AS_QEMU' }}
+          image: "debian:sid-slim"
 
       - name: 📋 Install dependencies
         uses: ./.github/actions/run-in-container
         with:
-          command: ${{ matrix.platform.deps }}
+          command: apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-dev
 
       - name: 🔨 Compile
         uses: ./.github/actions/compile
         with:
-          backend: ${{ matrix.platform.backend }}
+          backend: WebKitGtk
           platform: Linux
           build-type: ${{ matrix.build-type }}
           in-container: true
@@ -415,5 +310,5 @@ jobs:
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: "GNU_Linux-${{ matrix.platform.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          name: "GNU_Linux-WebKitGtk-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
           path: "to_upload"
