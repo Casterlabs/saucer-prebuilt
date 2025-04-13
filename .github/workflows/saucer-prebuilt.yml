@@ -190,7 +190,7 @@ jobs:
               arch: "x86_64",
               qemuArch: "linux/amd64",
               dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
             }
           - {
               backend: WebKitGtk,
@@ -198,7 +198,7 @@ jobs:
               arch: "x86",
               qemuArch: "linux/386",
               dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
             }
           - {
               backend: WebKitGtk,
@@ -206,7 +206,7 @@ jobs:
               arch: "aarch64",
               qemuArch: "linux/arm64",
               dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
             }
           - {
               backend: WebKitGtk,
@@ -214,7 +214,7 @@ jobs:
               arch: "arm",
               qemuArch: "linux/arm/v5",
               dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
             }
           - {
               backend: WebKitGtk,
@@ -222,7 +222,7 @@ jobs:
               arch: "ppc64le",
               qemuArch: "linux/ppc64le",
               dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
             }
           - {
               backend: WebKitGtk,
@@ -230,7 +230,7 @@ jobs:
               arch: "riscv64",
               qemuArch: "linux/riscv64",
               dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
             }
           - {
               backend: WebKitGtk,
@@ -238,7 +238,7 @@ jobs:
               arch: "s390x",
               qemuArch: "linux/s390x",
               dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
             }
           - {
               backend: WebKitGtk,
@@ -246,7 +246,7 @@ jobs:
               arch: "mips64el", # el in LLVM, le in qemu/docker.
               qemuArch: "linux/mips64le",
               dockerArch: SAME_AS_QEMU,
-              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1",
             }
 
     runs-on: ubuntu-latest
