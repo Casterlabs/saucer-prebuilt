@@ -90,21 +90,21 @@ jobs:
           platform: macOS
           build-type: ${{ matrix.build-type }}
 
-      - name: ⚙️ Reorganize files
-        shell: bash
-        run: |
-          mkdir to_upload
-          cp "bindings/libsaucer-bindings.dylib" to_upload
-          cp "bindings/_deps/saucer-build/libsaucer.dylib" to_upload
-          cp "bindings/modules/desktop/libsaucer-bindings-desktop.dylib" to_upload
-          cp "bindings/modules/pdf/libsaucer-bindings-pdf.dylib" to_upload
+      # - name: ⚙️ Reorganize files
+      #   shell: bash
+      #   run: |
+      #     mkdir to_upload
+      #     cp "bindings/libsaucer-bindings.dylib" to_upload
+      #     cp "bindings/_deps/saucer-build/libsaucer.dylib" to_upload
+      #     cp "bindings/modules/desktop/libsaucer-bindings-desktop.dylib" to_upload
+      #     cp "bindings/modules/pdf/libsaucer-bindings-pdf.dylib" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "macOS-WebKit-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: "to_upload"
+          path: "bindings"
 
   build-gnu_linux:
     strategy:
@@ -228,18 +228,18 @@ jobs:
           in-container: true
           arm-hack: ${{ matrix.platform.arch }}
 
-      - name: ⚙️ Reorganize files
-        shell: bash
-        run: |
-          mkdir to_upload
-          cp "bindings/libsaucer-bindings.so" to_upload
-          cp "bindings/_deps/saucer-build/libsaucer.so" to_upload
-          cp "bindings/modules/desktop/libsaucer-bindings-desktop.so" to_upload
-          cp "bindings/modules/pdf/libsaucer-bindings-pdf.so" to_upload
+      # - name: ⚙️ Reorganize files
+      #   shell: bash
+      #   run: |
+      #     mkdir to_upload
+      #     cp "bindings/libsaucer-bindings.so" to_upload
+      #     cp "bindings/_deps/saucer-build/libsaucer.so" to_upload
+      #     cp "bindings/modules/desktop/libsaucer-bindings-desktop.so" to_upload
+      #     cp "bindings/modules/pdf/libsaucer-bindings-pdf.so" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "GNU_Linux-${{ matrix.platform.backend }}-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: "to_upload"
+          path: "bindings"
