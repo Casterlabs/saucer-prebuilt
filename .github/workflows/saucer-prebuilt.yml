@@ -162,35 +162,35 @@ jobs:
           # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
           - {
               backend: WebKitGtk,
-              image: "gcc:14.2.0-bookworm",
+              image: "debian:sid-slim",
               arch: "x86_64",
               qemuArch: "linux/amd64",
               dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
             }
           - {
               backend: WebKitGtk,
-              image: "gcc:14.2.0-bookworm",
+              image: "debian:sid-slim",
               arch: "aarch64",
               qemuArch: "linux/arm64",
               dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
             }
           - {
               backend: WebKitGtk,
-              image: "gcc:14.2.0-bookworm",
+              image: "debian:sid-slim",
               arch: "arm",
               qemuArch: "linux/arm/v5",
               dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
             }
           - {
               backend: WebKitGtk,
-              image: "gcc:14.2.0-bookworm",
+              image: "debian:sid-slim",
               arch: "ppc64le",
               qemuArch: "linux/ppc64le",
               dockerArch: "SAME_AS_QEMU",
-              deps: "apt update && apt install -y build-essential git cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
             }
 
     runs-on: ubuntu-latest
