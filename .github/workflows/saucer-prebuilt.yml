@@ -115,16 +115,16 @@ jobs:
           # - Debug
         platform:
           # Check these for architecture compatibility:
-          # https://packages.debian.org/search?searchon=names&keywords=qtwebengine5
+          # https://packages.debian.org/search?searchon=names&keywords=qtwebengine5-dev
           # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
           # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
           - {
               backend: Qt5,
-              image: "archlinux:base-devel",
+              image: "debian:sid-slim",
               arch: "x86_64",
               qemuArch: "linux/amd64",
               dockerArch: SAME_AS_QEMU,
-              deps: "pacman --noconfirm -Syu cmake gcc git xorg-server-xvfb xorg-xwd p7zip qt5-base qt5-webchannel qt5-webengine",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev",
             }
           - {
               backend: Qt5,
@@ -141,11 +141,11 @@ jobs:
           # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
           - {
               backend: Qt6,
-              image: "archlinux:base-devel",
+              image: "debian:sid-slim",
               arch: "x86_64",
               qemuArch: "linux/amd64",
               dockerArch: "SAME_AS_QEMU",
-              deps: "pacman --noconfirm -Syu cmake gcc git xorg-server-xvfb xorg-xwd p7zip qt6-base qt6-declarative qt6-svg qt6-tools qt6-translations qt6-webchannel qt6-webengine",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qt6-base-dev qt6-tools-dev qt6-declarative-dev qt6-webchannel-dev qt6-webengine-dev qt6-svg-dev",
             }
           - {
               backend: Qt6,
