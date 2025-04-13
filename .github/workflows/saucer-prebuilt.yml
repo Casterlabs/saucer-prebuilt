@@ -129,8 +129,24 @@ jobs:
           - {
               backend: Qt5,
               image: "debian:sid-slim",
+              arch: "x86",
+              qemuArch: "linux/386",
+              dockerArch: SAME_AS_QEMU,
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev",
+            }
+          - {
+              backend: Qt5,
+              image: "debian:sid-slim",
               arch: "aarch64",
               qemuArch: "linux/arm64/v8",
+              dockerArch: SAME_AS_QEMU,
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev",
+            }
+          - {
+              backend: Qt5,
+              image: "debian:sid-slim",
+              arch: "mips64el", # el in LLVM, le in qemu/docker.
+              qemuArch: "linux/mips64le",
               dockerArch: SAME_AS_QEMU,
               deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev",
             }
@@ -150,6 +166,14 @@ jobs:
           - {
               backend: Qt6,
               image: "debian:sid-slim",
+              arch: "x86",
+              qemuArch: "linux/386",
+              dockerArch: "SAME_AS_QEMU",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qt6-base-dev qt6-tools-dev qt6-declarative-dev qt6-webchannel-dev qt6-webengine-dev qt6-svg-dev",
+            }
+          - {
+              backend: Qt6,
+              image: "debian:sid-slim",
               arch: "aarch64",
               qemuArch: "linux/arm64/v8",
               dockerArch: "SAME_AS_QEMU",
@@ -158,13 +182,21 @@ jobs:
 
           # Check these for architecture compatibility:
           # https://packages.debian.org/search?searchon=names&keywords=libgtk-4-dev
-          # https://hub.docker.com/_/gcc/tags?page=&page_size=&ordering=&name=bookworm
+          # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
           # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
           - {
               backend: WebKitGtk,
               image: "debian:sid-slim",
               arch: "x86_64",
               qemuArch: "linux/amd64",
+              dockerArch: "SAME_AS_QEMU",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+            }
+          - {
+              backend: WebKitGtk,
+              image: "debian:sid-slim",
+              arch: "x86",
+              qemuArch: "linux/386",
               dockerArch: "SAME_AS_QEMU",
               deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
             }
@@ -191,6 +223,30 @@ jobs:
               qemuArch: "linux/ppc64le",
               dockerArch: "SAME_AS_QEMU",
               deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+            }
+          - {
+              backend: WebKitGtk,
+              image: "debian:sid-slim",
+              arch: "riscv64",
+              qemuArch: "linux/riscv64",
+              dockerArch: "SAME_AS_QEMU",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+            }
+          - {
+              backend: WebKitGtk,
+              image: "debian:sid-slim",
+              arch: "s390x",
+              qemuArch: "linux/s390x",
+              dockerArch: "SAME_AS_QEMU",
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0",
+            }
+          - {
+              backend: WebKitGtk,
+              image: "debian:sid-slim",
+              arch: "mips64el", # el in LLVM, le in qemu/docker.
+              qemuArch: "linux/mips64le",
+              dockerArch: SAME_AS_QEMU,
+              deps: "apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev",
             }
 
     runs-on: ubuntu-latest
