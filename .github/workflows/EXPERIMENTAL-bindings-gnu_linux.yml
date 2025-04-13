@@ -1,9 +1,9 @@
 on:
   push:
     branches:
-      - 'main'
+      - "main"
   pull_request:
-  release: 
+  release:
     types: [created]
 
 name: ⚠️ GNU/Linux EXPERIMENTAL
@@ -78,19 +78,30 @@ jobs:
             apt install -y qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev
 
       - name: 🔨 Compile
+        uses: ./.github/actions/compile
+        with:
+          backend: Qt5
+          platform: Linux
+          build-type: ${{ matrix.build-type }}
+          in-container: true
+          arm-hack: ${{ matrix.platform.arch}}
+
+      - name: ⚙️ Reorganize files
         uses: ./.github/actions/run-in-container
         with:
           command: |
-            cd saucer
-            cmake -B build -Dsaucer_backend=Qt5
-            cmake --build build --config ${{ matrix.build-type }}
+            mkdir to_upload
+            cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.so" to_upload
+            cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.so" to_upload
+            cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.so" to_upload
+            cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.so" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "GNU_Linux-Qt5-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: "saucer/build/libsaucer-bindings.so"
+          path: "to_upload"
 
   experimental-build-gnu_linux-qt6:
     strategy:
@@ -152,22 +163,27 @@ jobs:
             apt install -y qt6-base-dev qt6-tools-dev qt6-declarative-dev qt6-webchannel-dev qt6-webengine-dev qt6-svg-dev
 
       - name: 🔨 Compile
+        uses: ./.github/actions/compile
+        with:
+          backend: Qt6
+          platform: Linux
+          build-type: ${{ matrix.build-type }}
+          in-container: true
+          arm-hack: ${{ matrix.platform.arch}}
+
+      - name: ⚙️ Reorganize files
         uses: ./.github/actions/run-in-container
         with:
           command: |
-            if [ "${{ matrix.platform.arch }}" == "armel" ]; then
-              export TARGET_ARCH="armv6+nofp"
-            elif [ "${{ matrix.platform.arch }}" == "armhf" ]; then
-              export TARGET_ARCH="armv6+fp"
-            fi
-
-            cd saucer
-            cmake -B build -Dsaucer_backend=Qt6
-            cmake --build build --config ${{ matrix.build-type }}
+            mkdir to_upload
+            cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.so" to_upload
+            cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.so" to_upload
+            cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.so" to_upload
+            cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.so" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "GNU_Linux-Qt6-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: "saucer/build/libsaucer-bindings.so"
+          path: "to_upload"

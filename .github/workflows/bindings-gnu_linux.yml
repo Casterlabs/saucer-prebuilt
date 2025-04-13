@@ -1,9 +1,9 @@
 on:
   push:
     branches:
-      - 'main'
+      - "main"
   pull_request:
-  release: 
+  release:
     types: [created]
 
 name: ⛓️ GNU/Linux
@@ -44,18 +44,27 @@ jobs:
         run: pacman --noconfirm -Syu qt5-base qt5-webchannel qt5-webengine
 
       - name: 🔨 Compile
+        uses: ./.github/actions/compile
+        with:
+          backend: Qt5
+          platform: Linux
+          build-type: ${{ matrix.build-type }}
+
+      - name: ⚙️ Reorganize files
         shell: bash
         run: |
-            cd saucer
-            cmake -B build -Dsaucer_backend=Qt5
-            cmake --build build --config ${{ matrix.build-type }}
+          mkdir to_upload
+          cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.so" to_upload
+          cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.so" to_upload
+          cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.so" to_upload
+          cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.so" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "GNU_Linux-Qt5-x86_64-${{ matrix.build-type }}"
-          path: "saucer/build/libsaucer-bindings.so"
+          path: "to_upload"
 
   build-gnu_linux-qt6:
     strategy:
@@ -89,18 +98,27 @@ jobs:
         run: pacman --noconfirm -Syu qt6-base qt6-declarative qt6-svg qt6-tools qt6-translations qt6-webchannel qt6-webengine
 
       - name: 🔨 Compile
+        uses: ./.github/actions/compile
+        with:
+          backend: Qt6
+          platform: Linux
+          build-type: ${{ matrix.build-type }}
+
+      - name: ⚙️ Reorganize files
         shell: bash
         run: |
-            cd saucer
-            cmake -B build -Dsaucer_backend=Qt6
-            cmake --build build --config ${{ matrix.build-type }}
+          mkdir to_upload
+          cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.so" to_upload
+          cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.so" to_upload
+          cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.so" to_upload
+          cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.so" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "GNU_Linux-Qt6-x86_64-${{ matrix.build-type }}"
-          path: "saucer/build/libsaucer-bindings.so"
+          path: "to_upload"
 
   build-gnu_linux-webkitgtk:
     strategy:
@@ -124,11 +142,7 @@ jobs:
               qemuArch: "linux/arm64",
               dockerArch: SAME_AS_QEMU,
             }
-          - {
-              arch: "arm",
-              qemuArch: "linux/arm/v5",
-              dockerArch: SAME_AS_QEMU,
-            }
+          - { arch: "arm", qemuArch: "linux/arm/v5", dockerArch: SAME_AS_QEMU }
           - {
               arch: "ppc64le",
               qemuArch: "linux/ppc64le",
@@ -170,20 +184,27 @@ jobs:
             apt install -y libgtk-4-dev libwebkitgtk-6.0-dev libadwaita-1-0
 
       - name: 🔨 Compile
+        uses: ./.github/actions/compile
+        with:
+          backend: WebKitGtk
+          platform: Linux
+          build-type: ${{ matrix.build-type }}
+          in-container: true
+          arm-hack: ${{ matrix.platform.arch}}
+
+      - name: ⚙️ Reorganize files
         uses: ./.github/actions/run-in-container
         with:
           command: |
-            if [ "${{ matrix.platform.arch }}" == "arm" ]; then
-              export TARGET_ARCH="armv5+nofp"
-            fi
-
-            cd saucer
-            cmake -B build -Dsaucer_backend=WebKitGtk
-            cmake --build build --config ${{ matrix.build-type }}
+            mkdir to_upload
+            cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.so" to_upload
+            cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.so" to_upload
+            cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.so" to_upload
+            cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.so" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "GNU_Linux-WebKitGtk-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: "saucer/build/libsaucer-bindings.so"
+          path: "to_upload"

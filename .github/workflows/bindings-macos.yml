@@ -1,23 +1,23 @@
 on:
   push:
     branches:
-      - 'main'
+      - "main"
   pull_request:
-  release: 
+  release:
     types: [created]
 
 name: ⛓️ macOS
 
 jobs:
-  build-macos-arm:
+  build-macos:
     strategy:
       fail-fast: false
       matrix:
         build-type:
           - Release
           # - Debug
-        platform: 
-          - { arch: x86_64, os: [self-hosted, macOS, x64, macos14-intel] } # Self hosted runner, thanks Max!
+        platform:
+          # - { arch: x86_64, os: [self-hosted, macOS, x64, macos14-intel] } # Self hosted runner, thanks Max!
           - { arch: aarch64, os: macos-14 }
 
     runs-on: ${{ matrix.platform.os }}
@@ -35,15 +35,24 @@ jobs:
           ref: main
 
       - name: 🔨 Compile
+        uses: ./.github/actions/compile
+        with:
+          backend: WebKit
+          platform: macOS
+          build-type: ${{ matrix.build-type }}
+
+      - name: ⚙️ Reorganize files
         shell: bash
         run: |
-          cd saucer
-          cmake -B build -Dsaucer_backend=WebKit
-          cmake --build build --config ${{ matrix.build-type }}
+          mkdir to_upload
+          cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.dylib" to_upload
+          cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.dylib" to_upload
+          cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.dylib" to_upload
+          cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.dylib" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "macOS-WebKit-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: "saucer/build/libsaucer-bindings.dylib"
+          path: "to_upload"

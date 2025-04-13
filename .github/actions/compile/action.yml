@@ -10,19 +10,54 @@ inputs:
     required: true
     description: The platform which is used to compile
 
-  cmake-args:
-    description: Additional Arguments passed to cmake
-
   build-type:
     required: true
     description: The CMake build configuration
 
+  cmake-args:
+    required: false
+    description: Additional Arguments passed to cmake
+
+  in-container:
+    required: false
+    description: Whether or not to run in the current container
+
+  arm-hack:
+    required: false
+    description: Sets TARGET_ARCH to hack-in support for arm 32bit. Valid input: arm, armel, armhf
+
 runs:
   using: "composite"
   steps:
-    - name: 🔨 Compile
-      working-directory: ./bindings
+    - name: Compile (Straight)
+      if: inputs.in-container != 'true'
       shell: bash
       run: |
+        if [ "${{ inputs.arm-hack }}" == "armel" ]; then
+          export TARGET_ARCH="armv6+nofp"
+        elif [ "${{ inputs.arm-hack }}" == "armhf" ]; then
+          export TARGET_ARCH="armv6+fp"
+        elif [ "${{ inputs.arm-hack  }}" == "arm" ]; then
+          export TARGET_ARCH="armv5+nofp"
+        fi
+
+        cd bindings
         cmake -B build -Dsaucer_backend=${{ inputs.backend }} ${{ inputs.cmake-args }}
         cmake --build build --config ${{ inputs.build-type }}
+
+    - name: Compile (In-Container)
+      if: inputs.in-container == 'true'
+      uses: ./.github/actions/run-in-container
+      with:
+        command: |
+          if [ "${{ inputs.arm-hack }}" == "armel" ]; then
+            export TARGET_ARCH="armv6+nofp"
+          elif [ "${{ inputs.arm-hack }}" == "armhf" ]; then
+            export TARGET_ARCH="armv6+fp"
+          elif [ "${{ inputs.arm-hack  }}" == "arm" ]; then
+            export TARGET_ARCH="armv5+nofp"
+          fi
+
+          cd bindings
+          cmake -B build -Dsaucer_backend=${{ inputs.backend }} ${{ inputs.cmake-args }}
+          cmake --build build --config ${{ inputs.build-type }}
