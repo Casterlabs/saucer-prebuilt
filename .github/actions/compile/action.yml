@@ -24,7 +24,7 @@ inputs:
 
   arm-hack:
     required: false
-    description: Sets TARGET_ARCH to hack-in support for arm 32bit. Valid input: arm, armel, armhf
+    description: Sets TARGET_ARCH to hack-in support for arm 32bit. Valid inputs arm, armel, armhf
 
 runs:
   using: "composite"
