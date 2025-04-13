@@ -1,0 +1,28 @@
+name: "🛸 Compile Saucer"
+description: "Installs Dependencies & Compiles Saucer"
+
+inputs:
+  backend:
+    required: true
+    description: The backend to use
+
+  platform:
+    required: true
+    description: The platform which is used to compile
+
+  cmake-args:
+    description: Additional Arguments passed to cmake
+
+  build-type:
+    required: true
+    description: The CMake build configuration
+
+runs:
+  using: "composite"
+  steps:
+    - name: 🔨 Compile
+      working-directory: ./bindings
+      shell: bash
+      run: |
+        cmake -B build -Dsaucer_backend=${{ inputs.backend }} ${{ inputs.cmake-args }}
+        cmake --build build --config ${{ inputs.build-type }}
