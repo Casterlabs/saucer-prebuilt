@@ -44,13 +44,18 @@ jobs:
           build-type: ${{ matrix.build-type }}
           cmake-args: -Dsaucer_msvc_hack=ON -Dsaucer_serializer=Rflpp
 
+      - name: ⚙️ Reorganize files
+        shell: bash
+        run: |
+          mkdir to_upload
+          cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.dll" to_upload
+          cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.dll" to_upload
+          cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.dll" to_upload
+          cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.dll" to_upload
+
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: |
-            "bindings/build/${{ matrix.build-type }}/saucer-bindings.dll"
-            "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.dll"
-            "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.dll"
-            "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.dll"
+          path: "to_upload"
