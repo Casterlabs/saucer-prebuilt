@@ -49,4 +49,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: "bindings/build/${{ matrix.build-type }}"
+          path: |
+            "bindings/build/${{ matrix.build-type }}/saucer-bindings.dll"
+            "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.dll"
+            "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.dll"
+            "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.dll"
