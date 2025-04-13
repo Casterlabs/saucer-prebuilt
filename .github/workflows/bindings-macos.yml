@@ -45,10 +45,10 @@ jobs:
         shell: bash
         run: |
           mkdir to_upload
-          cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.dylib" to_upload
-          cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.dylib" to_upload
-          cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.dylib" to_upload
-          cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.dylib" to_upload
+          cp "bindings/libsaucer-bindings.dylib" to_upload
+          cp "bindings/_deps/saucer-build/libsaucer.dylib" to_upload
+          cp "bindings/modules/desktop/libsaucer-bindings-desktop.dylib" to_upload
+          cp "bindings/modules/pdf/libsaucer-bindings-pdf.dylib" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact

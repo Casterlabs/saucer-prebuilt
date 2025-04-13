@@ -54,10 +54,10 @@ jobs:
         shell: bash
         run: |
           mkdir to_upload
-          cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.so" to_upload
-          cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.so" to_upload
-          cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.so" to_upload
-          cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.so" to_upload
+          cp "bindings/libsaucer-bindings.so" to_upload
+          cp "bindings/_deps/saucer-build/libsaucer.so" to_upload
+          cp "bindings/modules/desktop/libsaucer-bindings-desktop.so" to_upload
+          cp "bindings/modules/pdf/libsaucer-bindings-pdf.so" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
@@ -108,10 +108,10 @@ jobs:
         shell: bash
         run: |
           mkdir to_upload
-          cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.so" to_upload
-          cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.so" to_upload
-          cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.so" to_upload
-          cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.so" to_upload
+          cp "bindings/libsaucer-bindings.so" to_upload
+          cp "bindings/_deps/saucer-build/libsaucer.so" to_upload
+          cp "bindings/modules/desktop/libsaucer-bindings-desktop.so" to_upload
+          cp "bindings/modules/pdf/libsaucer-bindings-pdf.so" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
@@ -193,14 +193,13 @@ jobs:
           arm-hack: ${{ matrix.platform.arch}}
 
       - name: ⚙️ Reorganize files
-        uses: ./.github/actions/run-in-container
-        with:
-          command: |
-            mkdir to_upload
-            cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.so" to_upload
-            cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.so" to_upload
-            cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.so" to_upload
-            cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.so" to_upload
+        shell: bash
+        run: |
+          mkdir to_upload
+          cp "bindings/libsaucer-bindings.so" to_upload
+          cp "bindings/_deps/saucer-build/libsaucer.so" to_upload
+          cp "bindings/modules/desktop/libsaucer-bindings-desktop.so" to_upload
+          cp "bindings/modules/pdf/libsaucer-bindings-pdf.so" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
