@@ -71,7 +71,8 @@ jobs:
           # - Debug
         platform:
           # - { arch: x86_64, os: [self-hosted, macOS, x64, macos14-intel] } # Self hosted runner, thanks Max!
-          - { arch: aarch64, os: macos-14 }
+          - { arch: x86_64, os: macos-15-intel }
+          - { arch: aarch64, os: macos-15 }
 
     runs-on: ${{ matrix.platform.os }}
     name: "macOS-WebKit-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
