@@ -158,7 +158,7 @@ jobs:
       - name: 🔨 Compile
         uses: ./.github/actions/compile
         with:
-          backend: Qt6
+          backend: Qt
           platform: Linux
           build-type: ${{ matrix.build-type }}
           in-container: true
