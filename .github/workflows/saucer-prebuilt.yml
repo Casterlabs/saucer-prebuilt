@@ -3,6 +3,7 @@ on:
     branches:
       - "main"
   pull_request:
+  workflow_dispatch:
   release:
     types: [created]
 
@@ -50,6 +51,7 @@ jobs:
           cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.dll" to_upload
           cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.dll" to_upload
           cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.dll" to_upload
+          cp "bindings/build/modules/loop/${{ matrix.build-type }}/saucer-bindings-loop.dll" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
@@ -98,80 +100,13 @@ jobs:
           cp "bindings/build/_deps/saucer-build/libsaucer.dylib" to_upload
           cp "bindings/build/modules/desktop/libsaucer-bindings-desktop.dylib" to_upload
           cp "bindings/build/modules/pdf/libsaucer-bindings-pdf.dylib" to_upload
+          cp "bindings/build/modules/loop/libsaucer-bindings-loop.dylib" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: "macOS-WebKit-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-          path: "to_upload"
-
-  build-gnu_linux_qt5:
-    strategy:
-      fail-fast: false
-      matrix:
-        build-type:
-          - Release
-          # - Debug
-        platform:
-          # Check these for architecture compatibility:
-          # https://packages.debian.org/search?searchon=names&keywords=qtwebengine5-dev
-          # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
-          # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
-          - { arch: "x86_64", qemuArch: "linux/amd64" }
-          - { arch: "x86", qemuArch: "linux/386" }
-          - { arch: "aarch64", qemuArch: "linux/arm64/v8" }
-          - { arch: "mips64el", qemuArch: "linux/mips64le" } # el in LLVM, le in qemu/docker.
-
-    runs-on: ubuntu-latest
-    name: "GNU_Linux-Qt5-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
-
-    steps:
-      - name: 📥 Checkout actions code
-        uses: actions/checkout@v4
-
-      - name: 🛸 Checkout Saucer bindings code
-        uses: actions/checkout@v4
-        with:
-          repository: saucer/bindings
-          path: bindings
-          ref: main
-
-      - name: 👨‍💻 Setup container
-        uses: ./.github/actions/setup-container
-        with:
-          qemuArch: ${{ matrix.platform.qemuArch }}
-          dockerArch: ${{ matrix.platform.dockerArch || 'SAME_AS_QEMU' }}
-          image: "debian:sid-slim"
-
-      - name: 📋 Install dependencies
-        uses: ./.github/actions/run-in-container
-        with:
-          command: apt update && apt install -y build-essential git gcc-14 cmake xvfb qtbase5-dev qtbase5-dev-tools qtdeclarative5-dev libqt5webchannel5-dev qtwebengine5-dev
-
-      - name: 🔨 Compile
-        uses: ./.github/actions/compile
-        with:
-          backend: Qt5
-          platform: Linux
-          build-type: ${{ matrix.build-type }}
-          in-container: true
-          arm-hack: ${{ matrix.platform.arch }}
-
-      - name: ⚙️ Reorganize files
-        shell: bash
-        run: |
-          mkdir to_upload
-          cp "bindings/build/libsaucer-bindings.so" to_upload
-          cp "bindings/build/_deps/saucer-build/libsaucer.so" to_upload
-          cp "bindings/build/modules/desktop/libsaucer-bindings-desktop.so" to_upload
-          cp "bindings/build/modules/pdf/libsaucer-bindings-pdf.so" to_upload
-
-      - name: 📦 Upload Artifact
-        uses: ./.github/actions/upload-artifact
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: "GNU_Linux-Qt5-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
           path: "to_upload"
 
   build-gnu_linux_qt6:
@@ -233,6 +168,7 @@ jobs:
           cp "bindings/build/_deps/saucer-build/libsaucer.so" to_upload
           cp "bindings/build/modules/desktop/libsaucer-bindings-desktop.so" to_upload
           cp "bindings/build/modules/pdf/libsaucer-bindings-pdf.so" to_upload
+          cp "bindings/build/modules/loop/libsaucer-bindings-loop.so" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
@@ -305,6 +241,7 @@ jobs:
           cp "bindings/build/_deps/saucer-build/libsaucer.so" to_upload
           cp "bindings/build/modules/desktop/libsaucer-bindings-desktop.so" to_upload
           cp "bindings/build/modules/pdf/libsaucer-bindings-pdf.so" to_upload
+          cp "bindings/build/modules/loop/libsaucer-bindings-loop.so" to_upload
 
       - name: 📦 Upload Artifact
         uses: ./.github/actions/upload-artifact
