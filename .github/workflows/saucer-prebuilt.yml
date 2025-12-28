@@ -126,8 +126,8 @@ jobs:
           # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
           # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
           - { arch: "x86_64", qemuArch: "linux/amd64" }
-          - { arch: "x86", qemuArch: "linux/386" }
-          - { arch: "aarch64", qemuArch: "linux/arm64/v8" }
+          # - { arch: "x86", qemuArch: "linux/386" }
+          # - { arch: "aarch64", qemuArch: "linux/arm64/v8" }
 
     runs-on: ubuntu-latest
     name: "GNU_Linux-Qt6-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
@@ -195,13 +195,13 @@ jobs:
           # https://hub.docker.com/_/debian/tags?page=&page_size=&ordering=&name=sid-slim
           # https://github.com/tonistiigi/binfmt?tab=readme-ov-file#build-test-image
           - { arch: "x86_64", qemuArch: "linux/amd64" }
-          - { arch: "x86", qemuArch: "linux/386" }
-          - { arch: "aarch64", qemuArch: "linux/arm64" }
-          - { arch: "arm", qemuArch: "linux/arm/v5" }
-          - { arch: "ppc64le", qemuArch: "linux/ppc64le" }
-          - { arch: "riscv64", qemuArch: "linux/riscv64" }
-          - { arch: "s390x", qemuArch: "linux/s390x" }
-          - { arch: "mips64el", qemuArch: "linux/mips64le" } # el in LLVM, le in qemu/docker.
+          # - { arch: "x86", qemuArch: "linux/386" }
+          # - { arch: "aarch64", qemuArch: "linux/arm64" }
+          # - { arch: "arm", qemuArch: "linux/arm/v5" }
+          # - { arch: "ppc64le", qemuArch: "linux/ppc64le" }
+          # - { arch: "riscv64", qemuArch: "linux/riscv64" }
+          # - { arch: "s390x", qemuArch: "linux/s390x" }
+          # - { arch: "mips64el", qemuArch: "linux/mips64le" } # el in LLVM, le in qemu/docker.
 
     runs-on: ubuntu-latest
     name: "GNU_Linux-WebKitGtk-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
