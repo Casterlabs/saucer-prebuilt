@@ -11,7 +11,7 @@ name: ⛓️ Saucer Prebuilt
 
 jobs:
   build-windows:
-    # if: false # Temp disable for testing
+    if: false # Temp disable for testing
     strategy:
       fail-fast: false
       matrix:
