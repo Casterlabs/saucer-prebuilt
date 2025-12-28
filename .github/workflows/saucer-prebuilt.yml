@@ -62,7 +62,7 @@ jobs:
           path: "to_upload"
 
   build-macos:
-    # if: false # Temp disable for testing
+    if: false # Temp disable for testing
     strategy:
       fail-fast: false
       matrix:
