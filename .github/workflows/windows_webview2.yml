@@ -1,0 +1,61 @@
+on:
+  # push:
+  #   branches:
+  #     - "main"
+  # pull_request:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+name: ⛓️ Saucer Prebuilt - Windows WebView2
+
+jobs:
+  build-windows_webview2:
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type:
+          - Release
+          # - Debug
+        platform:
+          # - { arch: x86 }
+          - { arch: x86_64 }
+
+    runs-on: windows-latest
+    name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+
+    steps:
+      - name: 📥 Checkout actions code
+        uses: actions/checkout@v4
+
+      - name: 🛸 Checkout Saucer bindings code
+        uses: actions/checkout@v4
+        with:
+          repository: saucer/bindings
+          path: bindings
+          ref: main
+
+      - name: 🔨 Compile
+        uses: ./.github/actions/compile
+        with:
+          backend: WebView2
+          platform: Windows
+          build-type: ${{ matrix.build-type }}
+          cmake-args: -Dsaucer_msvc_hack=ON -Dsaucer_serializer=Rflpp
+
+      - name: ⚙️ Reorganize files
+        shell: bash
+        run: |
+          mkdir to_upload
+          cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.dll" to_upload
+          cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.dll" to_upload
+          cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.dll" to_upload
+          cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.dll" to_upload
+          cp "bindings/build/modules/loop/${{ matrix.build-type }}/saucer-bindings-loop.dll" to_upload
+
+      - name: 📦 Upload Artifact
+        uses: ./.github/actions/upload-artifact
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: "Windows-WebView2-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          path: "to_upload"

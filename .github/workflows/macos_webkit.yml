@@ -1,0 +1,61 @@
+on:
+  # push:
+  #   branches:
+  #     - "main"
+  # pull_request:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+name: ⛓️ Saucer Prebuilt - macOS WebKit
+
+jobs:
+  build-macos_webkit:
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type:
+          - Release
+          # - Debug
+        platform:
+          # - { arch: x86_64, os: [self-hosted, macOS, x64, macos14-intel] } # Self hosted runner, thanks Max!
+          - { arch: x86_64, os: macos-15-intel }
+          - { arch: aarch64, os: macos-15 }
+
+    runs-on: ${{ matrix.platform.os }}
+    name: "macOS-WebKit-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+
+    steps:
+      - name: 📥 Checkout actions code
+        uses: actions/checkout@v4
+
+      - name: 🛸 Checkout Saucer bindings code
+        uses: actions/checkout@v4
+        with:
+          repository: saucer/bindings
+          path: bindings
+          ref: main
+
+      - name: 🔨 Compile
+        uses: ./.github/actions/compile
+        with:
+          backend: WebKit
+          platform: macOS
+          build-type: ${{ matrix.build-type }}
+
+      - name: ⚙️ Reorganize files
+        shell: bash
+        run: |
+          mkdir to_upload
+          cp "bindings/build/libsaucer-bindings.dylib" to_upload
+          cp "bindings/build/_deps/saucer-build/libsaucer.dylib" to_upload
+          cp "bindings/build/modules/desktop/libsaucer-bindings-desktop.dylib" to_upload
+          cp "bindings/build/modules/pdf/libsaucer-bindings-pdf.dylib" to_upload
+          cp "bindings/build/modules/loop/libsaucer-bindings-loop.dylib" to_upload
+
+      - name: 📦 Upload Artifact
+        uses: ./.github/actions/upload-artifact
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: "macOS-WebKit-${{ matrix.platform.arch }}-${{ matrix.build-type }}"
+          path: "to_upload"
