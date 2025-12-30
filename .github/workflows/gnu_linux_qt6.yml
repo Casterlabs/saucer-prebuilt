@@ -45,7 +45,7 @@ jobs:
         with:
           qemuArch: ${{ matrix.platform.qemuArch }}
           dockerArch: ${{ matrix.platform.dockerArch || 'SAME_AS_QEMU' }}
-          image: "debian:trixie-slim"
+          image: "debian:sid-slim"
 
       - name: 📋 Install dependencies
         uses: ./.github/actions/run-in-container
