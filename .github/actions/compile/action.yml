@@ -26,6 +26,16 @@ inputs:
     required: false
     description: Sets TARGET_ARCH to hack-in support for arm 32bit. Valid inputs arm, armel, armhf
 
+  inline:
+    required: false
+    default: ""
+    description: Sets which modules will get inlined into the main bindings library. Semi-colon separated list. Empty for none.
+
+  static:
+    required: false
+    default: "OFF"
+    description: Inlines all modules and bindings and saucer into a single shared library. NOT RECOMMENDED as it breaks modularity. Set to 'ON' to enable.
+
 runs:
   using: "composite"
   steps:
@@ -42,7 +52,7 @@ runs:
         fi
 
         cd bindings
-        cmake -B build -Dsaucer_backend=${{ inputs.backend }} ${{ inputs.cmake-args }}
+        cmake -B build -Dsaucer_backend=${{ inputs.backend }} -Dsaucer_bindings_inline_modules="${{ inputs.inline }}" -Dsaucer_bindings_static=${{ inputs.static }} ${{ inputs.cmake-args }}
         cmake --build build --config ${{ inputs.build-type }}
 
     - name: Compile (In-Container)
@@ -59,5 +69,5 @@ runs:
           fi
 
           cd bindings
-          cmake -B build -Dsaucer_backend=${{ inputs.backend }} ${{ inputs.cmake-args }}
+          cmake -B build -Dsaucer_backend=${{ inputs.backend }} -Dsaucer_bindings_inline_modules="${{ inputs.inline }}" -Dsaucer_bindings_static=${{ inputs.static }} ${{ inputs.cmake-args }}
           cmake --build build --config ${{ inputs.build-type }}

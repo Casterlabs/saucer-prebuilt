@@ -72,6 +72,7 @@ jobs:
           mkdir to_upload
           cp "bindings/build/_deps/saucer-build/libsaucer.so" to_upload
           cp "bindings/build/libsaucer-bindings.so" to_upload
+          cp "bindings/build/modules/loop/libsaucer-bindings-loop.so" to_upload
           cp "bindings/build/modules/desktop/libsaucer-bindings-desktop.so" to_upload
           cp "bindings/build/modules/pdf/libsaucer-bindings-pdf.so" to_upload
 

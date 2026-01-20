@@ -49,6 +49,7 @@ jobs:
           mkdir to_upload
           cp "bindings/build/_deps/saucer-build/libsaucer.dylib" to_upload
           cp "bindings/build/libsaucer-bindings.dylib" to_upload
+          cp "bindings/build/modules/loop/libsaucer-bindings-loop.dylib" to_upload
           cp "bindings/build/modules/desktop/libsaucer-bindings-desktop.dylib" to_upload
           cp "bindings/build/modules/pdf/libsaucer-bindings-pdf.dylib" to_upload
 

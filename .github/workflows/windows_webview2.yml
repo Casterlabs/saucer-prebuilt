@@ -49,6 +49,7 @@ jobs:
           mkdir to_upload
           cp "bindings/build/_deps/saucer-build/${{ matrix.build-type }}/saucer.dll" to_upload
           cp "bindings/build/${{ matrix.build-type }}/saucer-bindings.dll" to_upload
+          cp "bindings/build/modules/loop/${{ matrix.build-type }}/saucer-bindings-loop.dll" to_upload
           cp "bindings/build/modules/desktop/${{ matrix.build-type }}/saucer-bindings-desktop.dll" to_upload
           cp "bindings/build/modules/pdf/${{ matrix.build-type }}/saucer-bindings-pdf.dll" to_upload
 
